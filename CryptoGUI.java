@@ -11,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+
 // Create a GUI to encrypt and decrypt files
 public class CryptoGUI extends JPanel {
 	private JPanel keyPanel, keyPanel2, inPanel, buttonPanel, encryptPanel, decryptPanel;
@@ -54,15 +55,14 @@ public class CryptoGUI extends JPanel {
 		this.statusLabel = new JLabel("Status: Waiting", JLabel.CENTER);
 		
 		// init textareas
-		this.keyArea = new JTextArea(1, 22);
-		this.inArea = new JTextArea(1, 15);
-
+		this.keyArea = new JTextArea(1, 28);
+		this.inArea = new JTextArea(2, 21);
 		this.inArea.setEditable(false);
 
 		// init scrollpanes
 		this.keyPane = new JScrollPane(this.keyArea, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		this.inPane = new JScrollPane(this.inArea, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
+		this.inPane = new JScrollPane(this.inArea, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
 		// init buttons
 		this.inButton = new JButton("Select");
 		this.encryptButton = new JButton("Encrypt");
@@ -123,23 +123,7 @@ public class CryptoGUI extends JPanel {
 			bw.close();
 		} catch(IOException ioe) {}
 	}
-
-	// get file name without extension
-	private static String getNameNoExtension(File f) {
-		String s = f.getAbsolutePath();
-		int sep = s.lastIndexOf(File.separator) + 1;
-		String ss = s.substring(sep);
-		int dot = ss.indexOf(".");
-		return ss.substring(0, dot);
-	}
-
-	// get file extension
-	private static String getExtension(File f) {
-		String s = f.getAbsolutePath();
-		int dot = s.lastIndexOf(".") + 1;
-		return s.substring(dot);
-	}
-
+	
 	// get file path
 	private static String getPath(File f) {
 		String s = f.getAbsolutePath();
@@ -195,9 +179,9 @@ private class EncryptListener implements ActionListener {
             // file
             if (CryptoGUI.this.inFile.isFile()) {
                 // check file
-                if (!CryptoGUI.this.inFile.getName().endsWith(".enc")) {
+                if (!CryptoGUI.this.inFile.getName().endsWith(".mao")) {
                     // get output file
-                    String encryptedFileName = CryptoGUI.this.inFile.getName() + ".enc";
+                    String encryptedFileName = CryptoGUI.this.inFile.getName() + ".mao";
                     CryptoGUI.this.outFile = new File(
                             CryptoGUI.getPath(CryptoGUI.this.inFile) + encryptedFileName);
 
@@ -210,6 +194,8 @@ private class EncryptListener implements ActionListener {
                     Timer timer = new Timer(1000, new ActionListener() {
                         public void actionPerformed(ActionEvent evt) {
                             CryptoGUI.this.statusLabel.setText("Status: 1 File Encrypted");
+							JOptionPane.showMessageDialog(CryptoGUI.this, "File has been encrypted successfully", "Encryption Complete", JOptionPane.INFORMATION_MESSAGE);
+
                         }
                     });
                     timer.setRepeats(false);
@@ -220,6 +206,7 @@ private class EncryptListener implements ActionListener {
 
                 } else {
                     CryptoGUI.this.statusLabel.setText("Status: File Already Encrypted");
+					JOptionPane.showMessageDialog(CryptoGUI.this, "File is already encrypted", "Encryption Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 // directory
@@ -227,12 +214,12 @@ private class EncryptListener implements ActionListener {
                 File[] fileList = CryptoGUI.this.inFile.listFiles();
                 this.count = 0;
                 for (int i = 0; i < fileList.length; i++) {
-                    if (!fileList[i].getName().endsWith(".enc")) {
+                    if (!fileList[i].getName().endsWith(".mao")) {
                         // bump count
                         this.count++;
 
                         // get output file
-                        String encryptedFileName = fileList[i].getName() + ".enc";
+                        String encryptedFileName = fileList[i].getName() + ".mao";
                         CryptoGUI.this.outFile = new File(
                                 CryptoGUI.getPath(fileList[i]) + encryptedFileName);
 
@@ -251,6 +238,7 @@ private class EncryptListener implements ActionListener {
                 Timer timer = new Timer(1000, new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         CryptoGUI.this.statusLabel.setText("Status: " + EncryptListener.this.count + " File(s) Encrypted");
+						JOptionPane.showMessageDialog(CryptoGUI.this, "File has been encrypted successfully", "Encryption Complete", JOptionPane.INFORMATION_MESSAGE);
                     }
                 });
                 timer.setRepeats(false);
@@ -268,9 +256,6 @@ private class EncryptListener implements ActionListener {
 }
 
 
-	// listener for the decrypt button
-
-
 // listener for the decrypt button
 private class DecryptListener implements ActionListener {
     private int count;
@@ -280,9 +265,9 @@ private class DecryptListener implements ActionListener {
             // file
             if (CryptoGUI.this.inFile.isFile()) {
                 // check file
-                if (CryptoGUI.this.inFile.getName().endsWith(".enc")) {
+                if (CryptoGUI.this.inFile.getName().endsWith(".mao")) {
                     // get output file
-                    String decryptedFileName = CryptoGUI.this.inFile.getName().replace(".enc", "");
+                    String decryptedFileName = CryptoGUI.this.inFile.getName().replace(".mao", "");
                     CryptoGUI.this.outFile = new File(
                             CryptoGUI.getPath(CryptoGUI.this.inFile) + decryptedFileName);
 
@@ -295,6 +280,7 @@ private class DecryptListener implements ActionListener {
                     Timer timer = new Timer(1000, new ActionListener() {
                         public void actionPerformed(ActionEvent evt) {
                             CryptoGUI.this.statusLabel.setText("Status: 1 File Decrypted");
+							JOptionPane.showMessageDialog(CryptoGUI.this, "File has been decrypted successfully", "Decryption Complete", JOptionPane.INFORMATION_MESSAGE);
                         }
                     });
                     timer.setRepeats(false);
@@ -305,6 +291,7 @@ private class DecryptListener implements ActionListener {
 
                 } else {
                     CryptoGUI.this.statusLabel.setText("Status: File Not Encrypted");
+					JOptionPane.showMessageDialog(CryptoGUI.this, "File is not encrypted", "Decryption Error", JOptionPane.ERROR_MESSAGE);
                 }
 
                 // directory
@@ -312,12 +299,12 @@ private class DecryptListener implements ActionListener {
                 File[] fileList = CryptoGUI.this.inFile.listFiles();
                 this.count = 0;
                 for (int i = 0; i < fileList.length; i++) {
-                    if (fileList[i].getName().endsWith(".enc")) {
+                    if (fileList[i].getName().endsWith(".mao")) {
                         // bump count
                         this.count++;
 
                         // get output file
-                        String decryptedFileName = fileList[i].getName().replace(".enc", "");
+                        String decryptedFileName = fileList[i].getName().replace(".mao", "");
                         CryptoGUI.this.outFile = new File(
                                 CryptoGUI.getPath(fileList[i]) + decryptedFileName);
 
@@ -336,6 +323,7 @@ private class DecryptListener implements ActionListener {
                 Timer timer = new Timer(1000, new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
                         CryptoGUI.this.statusLabel.setText("Status: " + DecryptListener.this.count + " File(s) Decrypted");
+						JOptionPane.showMessageDialog(CryptoGUI.this, "File has been decrypted successfully", "Decryption Complete", JOptionPane.INFORMATION_MESSAGE);
                     }
                 });
                 timer.setRepeats(false);
@@ -363,7 +351,7 @@ private class DecryptListener implements ActionListener {
 	// run		
 	public static void main(String[] args) {
 		// create gui
-		JFrame frame = new JFrame("CryptoGUI");
+		JFrame frame = new JFrame("File Encryption and Decryption : Orpiada M.");
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -373,6 +361,7 @@ private class DecryptListener implements ActionListener {
 		frame.add(new CryptoGUI());
 		frame.pack();
 		frame.setVisible(true);
+		frame.setSize(450, 220);
 	}
 }
 		
