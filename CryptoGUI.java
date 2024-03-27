@@ -351,7 +351,7 @@ private class DecryptListener implements ActionListener {
 	// run		
 	public static void main(String[] args) {
 		// create gui
-		JFrame frame = new JFrame("File Encryption and Decryption : Orpiada M.");
+		JFrame frame = new JFrame("ADET4 : Orpiada Marlon A.");
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
